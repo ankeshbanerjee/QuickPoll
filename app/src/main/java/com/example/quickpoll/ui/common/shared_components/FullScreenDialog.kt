@@ -1,4 +1,4 @@
-package com.example.quickpoll.ui.components
+package com.example.quickpoll.ui.common.shared_components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size

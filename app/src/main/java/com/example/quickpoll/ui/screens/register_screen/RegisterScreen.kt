@@ -19,9 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.quickpoll.LocalParentNavController
-import com.example.quickpoll.ui.components.CustomOutlinedTextInput
-import com.example.quickpoll.ui.components.CustomPrimaryButton
-import com.example.quickpoll.ui.components.FullScreenDialog
+import com.example.quickpoll.ui.common.shared_components.CustomOutlinedTextInput
+import com.example.quickpoll.ui.common.shared_components.CustomPrimaryButton
+import com.example.quickpoll.ui.common.shared_components.FullScreenDialog
 import com.example.quickpoll.utils.UiState
 
 @Composable

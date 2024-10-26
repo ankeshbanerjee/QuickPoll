@@ -76,6 +76,8 @@ dependencies {
     kapt(libs.hilt.compiler)
     // retrofit
     implementation(libs.retrofit)
+    // okhttp
+    implementation(libs.okhttp)
     // gson converter
     implementation(libs.gson.converter)
     // navigation compose

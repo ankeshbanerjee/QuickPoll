@@ -1,6 +1,5 @@
 package com.example.quickpoll.ui.screens.login_screen
 
-import android.provider.Contacts.Intents.UI
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,9 +23,9 @@ import com.example.quickpoll.Login
 import com.example.quickpoll.Main
 import com.example.quickpoll.Register
 import com.example.quickpoll.Splash
-import com.example.quickpoll.ui.components.CustomOutlinedTextInput
-import com.example.quickpoll.ui.components.CustomPrimaryButton
-import com.example.quickpoll.ui.components.FullScreenDialog
+import com.example.quickpoll.ui.common.shared_components.CustomOutlinedTextInput
+import com.example.quickpoll.ui.common.shared_components.CustomPrimaryButton
+import com.example.quickpoll.ui.common.shared_components.FullScreenDialog
 import com.example.quickpoll.utils.UiState
 
 @Composable
@@ -40,7 +39,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
     val navController = LocalParentNavController.current
     fun navigateToMain() {
         navController.navigate(Main) {
-            popUpTo<Splash> {
+            popUpTo<Login> {
                 inclusive = true
             }
         }

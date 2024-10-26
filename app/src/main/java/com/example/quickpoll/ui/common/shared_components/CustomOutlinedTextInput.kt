@@ -1,4 +1,4 @@
-package com.example.quickpoll.ui.components
+package com.example.quickpoll.ui.common.shared_components
 
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.clickable
