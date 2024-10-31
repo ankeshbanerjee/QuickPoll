@@ -25,17 +25,17 @@ fun BottomNavItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .clickable { onClick() }
+            .clickable(onClick = onClick, indication = null, interactionSource = null)
     ) {
         Icon(
             painterResource(icon),
-            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary,
             contentDescription = null
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = title,
-            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.inversePrimary
         )
     }
 }
@@ -44,7 +44,7 @@ fun BottomNavItem(
 @Composable
 private fun BottomNavItemPreview() {
     BottomNavItem(
-        isSelected = true,
+        isSelected = false,
         onClick = {},
         title = "Polls",
         icon = R.drawable.ic_poll

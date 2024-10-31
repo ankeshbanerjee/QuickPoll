@@ -48,7 +48,7 @@ class RegisterViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        result.data?.let { res ->
+                        result.data.also { res ->
                             if (res.isSuccessful) {
                                 showToast(applicationContext, res.body()?.message ?: "Registration successful, Now Login!")
                                 _uiState.update { UiState.SUCCESS }

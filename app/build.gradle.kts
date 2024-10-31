@@ -88,4 +88,6 @@ dependencies {
     implementation(libs.datastore)
     // hilt viewmodel
     implementation(libs.hilt.viewmodel)
+    // coil
+    implementation(libs.coil)
 }

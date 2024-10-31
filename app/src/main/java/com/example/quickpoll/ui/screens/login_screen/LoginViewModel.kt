@@ -47,22 +47,17 @@ class LoginViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        result.data?.let { res ->
-//                            if (res.isSuccessful) {
-                                val responseBody = res.body()
-                                val authToken = responseBody?.result?.token ?: return@collect
-                                Log.d("AUTH_TOKEN", authToken)
-                                PreferencesDataStoreHelper.storeData(
-                                    applicationContext,
-                                    key = PreferencesDataStoreKey.AUTH_TOKEN,
-                                    data = authToken
-                                )
-                                _uiState.update { UiState.SUCCESS }
-                                navigate()
-//                            }else{
-//                                showToast(applicationContext, res.message())
-//                                _uiState.update { UiState.ERROR }
-//                            }
+                        result.data.also { res ->
+                            val responseBody = res.body()
+                            val authToken = responseBody?.result?.token ?: return@collect
+                            Log.d("AUTH_TOKEN", authToken)
+                            PreferencesDataStoreHelper.storeData(
+                                applicationContext,
+                                key = PreferencesDataStoreKey.AUTH_TOKEN,
+                                data = authToken
+                            )
+                            _uiState.update { UiState.SUCCESS }
+                            navigate()
                         }
                     }
 

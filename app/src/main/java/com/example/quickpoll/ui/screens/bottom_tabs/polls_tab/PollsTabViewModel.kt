@@ -1,12 +1,12 @@
-package com.example.quickpoll.ui.screens.main_screen
+package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quickpoll.data.network.model.user.User
+import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.utils.Resource
-import com.example.quickpoll.data.repository.UserRepository
+import com.example.quickpoll.data.repository.PollRepository
 import com.example.quickpoll.utils.UiState
 import com.example.quickpoll.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,39 +18,37 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+class PollsTabViewModel @Inject constructor(
+    private val pollRepository: PollRepository,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
-    private val _user = MutableStateFlow<User?>(null)
-    val user = _user.asStateFlow()
+    private val _polls = MutableStateFlow<List<Poll>>(emptyList())
+    val polls = _polls.asStateFlow()
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.IDLE)
+    private val _uiState = MutableStateFlow(UiState.IDLE)
     val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            userRepository.getUser().collect { response ->
+            pollRepository.getAllPolls().collect { response ->
                 when (response) {
                     is Resource.Success -> {
                         response.data.also { res ->
-                            _user.update {
-                                res.body()?.result?.user
-                            }
+                            _polls.update { res.body()?.result?.polls ?: emptyList() }
                         }
-                        _uiState.value = UiState.SUCCESS
+                        _uiState.update { UiState.IDLE }
                     }
 
                     is Resource.Error -> {
-                       response.message?.let {msg ->
-                           Log.d("GET_USER_ERROR", msg)
+                        response.message?.let { msg ->
+                            Log.d("GET_POLLS_ERROR", response.toString())
                             showToast(appContext, msg)
-                       }
-                        _uiState.value = UiState.ERROR
+                        }
+                        _uiState.update { UiState.ERROR }
                     }
 
                     is Resource.Loading -> {
-                        _uiState.value = UiState.LOADING
+                        _uiState.update { UiState.LOADING }
                     }
                 }
             }

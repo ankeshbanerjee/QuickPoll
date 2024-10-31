@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.quickpoll.data.network.model.user.User
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
 import com.example.quickpoll.ui.screens.add_poll_screen.AddPollScreen
+import com.example.quickpoll.ui.screens.add_poll_screen.AddPollViewModel
 import com.example.quickpoll.ui.screens.login_screen.LoginScreen
 import com.example.quickpoll.ui.screens.login_screen.LoginViewModel
 import com.example.quickpoll.ui.screens.main_screen.MainScreen
@@ -53,7 +54,8 @@ class MainActivity : ComponentActivity() {
                             MainScreen(viewModel, userViewModel)
                         }
                         composable<AddPoll> {
-                            AddPollScreen()
+                            val viewModel = hiltViewModel<AddPollViewModel>()
+                            AddPollScreen(viewModel)
                         }
                     }
                 }
