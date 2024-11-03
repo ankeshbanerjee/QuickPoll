@@ -46,7 +46,7 @@ import com.example.quickpoll.R
 import com.example.quickpoll.ui.common.shared_components.LoadingComponent
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
 import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.PollsTabViewModel
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollsTabScreen
+import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.PollsTabScreen
 import com.example.quickpoll.ui.screens.bottom_tabs.profile_tab.ProfileTabScreen
 import com.example.quickpoll.ui.screens.main_screen.components.BottomNavItem
 import com.example.quickpoll.utils.UiState

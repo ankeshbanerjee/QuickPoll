@@ -3,7 +3,10 @@ package com.example.quickpoll.data.network.model.poll
 import com.example.quickpoll.data.network.model.user.User
 
 data class PollResult(
-    val polls: List<Poll>
+    val polls: List<Poll>,
+    val currentPage: Int,
+    val total: Int,
+    val hasNextPage: Boolean
 )
 
 data class Option(

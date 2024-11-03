@@ -1,5 +1,10 @@
 package com.example.quickpoll.ui.screens.add_poll_screen
 
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -36,18 +42,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.quickpoll.LocalParentNavController
+import com.example.quickpoll.R
 import com.example.quickpoll.ui.common.shared_components.CustomOutlinedTextInput
 import com.example.quickpoll.ui.common.shared_components.CustomPrimaryButton
 import com.example.quickpoll.ui.common.shared_components.FullScreenDialog
 import com.example.quickpoll.utils.UiState
+import com.example.quickpoll.utils.getFileFromUri
+import com.example.quickpoll.utils.showToast
 import kotlinx.coroutines.launch
+import java.io.File
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddPollScreen(viewModel: AddPollViewModel) {
     val navController = LocalParentNavController.current
@@ -58,7 +72,9 @@ fun AddPollScreen(viewModel: AddPollViewModel) {
     fun addOption(option: String) = viewModel.addOption(option)
     fun deleteOption(option: String) = viewModel.deleteOption(option)
     fun createPoll() = viewModel.createPoll(::goBack)
+    fun uploadImage(file: File?) = viewModel.uploadImage(file)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val imageUrl by viewModel.imageurl.collectAsStateWithLifecycle()
 
     AddPollScreenContent(
         goBack = ::goBack,
@@ -68,6 +84,8 @@ fun AddPollScreen(viewModel: AddPollViewModel) {
         addOption = ::addOption,
         deleteOption = ::deleteOption,
         createPoll = ::createPoll,
+        uploadImage = ::uploadImage,
+        imageUrl = imageUrl,
         uiState = uiState
     )
 }
@@ -83,6 +101,8 @@ private fun AddPollScreenContent(
     addOption: (String) -> Unit,
     deleteOption: (String) -> Unit,
     createPoll: () -> Unit,
+    uploadImage: (File?) -> Unit,
+    imageUrl: String?,
     uiState: UiState
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -155,6 +175,38 @@ private fun AddPollScreenContent(
                     showBottomSheet = true
                 }, icon = Icons.Filled.Add
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            val context = LocalContext.current
+            val pickMedia =
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                    if (uri != null) {
+                        val file = getFileFromUri(contentResolver = context.contentResolver, uri = uri)
+                        uploadImage(file)
+                    }
+                }
+            CustomPrimaryButton(
+                text = "Upload Image", onClick = {
+                    pickMedia.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }, icon = ImageVector.vectorResource(R.drawable.ic_upload)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            imageUrl?.let {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Filled.Done,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Image uploaded", style = MaterialTheme.typography.labelLarge)
+                }
+            }
         }
     }
     FullScreenDialog(uiState == UiState.LOADING)
@@ -166,7 +218,6 @@ private fun AddPollScreenContent(
         ) {
             // Sheet content
             var option by rememberSaveable { mutableStateOf("") }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -204,13 +255,16 @@ private fun AddPollScreenContent(
 @Preview
 @Composable
 private fun AddPollScreenPreview() {
-    AddPollScreenContent(goBack = {},
+    AddPollScreenContent(
+        goBack = {},
         pollQuestion = "",
         setPollQuestion = {},
         options = listOf("Option 1", "Option 2"),
         addOption = {},
         deleteOption = {},
         createPoll = {},
+        uploadImage = {},
+        imageUrl = null,
         uiState = UiState.IDLE
     )
 }

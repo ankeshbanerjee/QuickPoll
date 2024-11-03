@@ -25,13 +25,13 @@ suspend fun <T> safeApiCall(call: suspend () -> T): Flow<Resource<T>> {
                 emit(Resource.Error(message = response.message()))
             }
         } catch (e: HttpException) {
-            Log.d("safeApiCallError", e.message())
+            Log.e("safeApiCallError", e.message())
             emit(Resource.Error(message = e.message()))
         } catch (e: IOException) {
-            Log.d("safeApiCallError", e.message?: "IOException")
+            Log.e("safeApiCallError", e.message?: "IOException")
             emit(Resource.Error(message = e.message))
         } catch (e: Exception) {
-            Log.d("safeApiCallError", e.message ?: "Exception")
+            Log.e("safeApiCallError", e.message ?: "Exception")
             emit(Resource.Error(message = e.message))
         }
     }

@@ -3,6 +3,7 @@ package com.example.quickpoll.di.module
 import android.content.Context
 import com.example.quickpoll.data.network.service.AuthService
 import com.example.quickpoll.data.network.service.PollService
+import com.example.quickpoll.data.network.service.UploadService
 import com.example.quickpoll.data.network.service.UserService
 import com.example.quickpoll.utils.Constants
 import com.example.quickpoll.utils.PreferencesDataStoreHelper
@@ -65,4 +66,9 @@ object NetworkModule {
     @Singleton
     fun providesPollService(retrofit: Retrofit): PollService =
         retrofit.create(PollService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesUploadService(retrofit: Retrofit): UploadService =
+        retrofit.create(UploadService::class.java)
 }

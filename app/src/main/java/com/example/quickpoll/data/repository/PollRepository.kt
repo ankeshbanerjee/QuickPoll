@@ -20,7 +20,8 @@ class PollRepository @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun createPoll(
         question: String,
-        options: List<String>
+        options: List<String>,
+        image: String? = null
     ): Flow<Resource<Response<ApiResponse<Any>>>> {
         return safeApiCall {
             val optionList = options.map {
@@ -30,13 +31,20 @@ class PollRepository @Inject constructor(
                 CreatePollRequestBody(
                     question = question,
                     options = optionList,
+                    image = image,
                     expiry = LocalDateTime.now().toString()
                 )
             )
         }
     }
 
-    suspend fun getAllPolls() = safeApiCall { pollService.getAllPolls() }
+    suspend fun getAllPolls(
+        page: Int = 1,
+        limit: Int = 10,
+    ) = safeApiCall { pollService.getAllPolls(
+        page = page,
+        limit = limit
+    ) }
 
     suspend fun votePoll(pollId: String, option: Int) = safeApiCall {
         pollService.votePoll(VotePollRequestBody(pollId, option))

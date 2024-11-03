@@ -1,37 +1,50 @@
-package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components
+package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.quickpoll.data.network.model.poll.Option
 import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.model.user.User
 import com.example.quickpoll.ui.common.shared_components.CustomAppBar
+import com.example.quickpoll.ui.common.shared_components.EndlessLazyColumn
+import com.example.quickpoll.ui.common.shared_components.LoadingComponent
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.PollsTabViewModel
+import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponent
+import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponentViewModel
+import com.example.quickpoll.utils.UiState
 
 @Composable
 fun PollsTabScreen(viewModel: PollsTabViewModel, userViewModel: UserViewModel) {
     val polls by viewModel.polls.collectAsStateWithLifecycle()
     val user by userViewModel.user.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val loadPolls = viewModel::loadPolls
     PollsTabScreenContent(
         polls = polls,
         user = user,
+        uiState = uiState,
+        loadPolls = loadPolls
     )
 }
 
 @Composable
 fun PollsTabScreenContent(
     polls: List<Poll>,
-    user: User?
+    user: User?,
+    uiState: UiState,
+    loadPolls: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -39,15 +52,51 @@ fun PollsTabScreenContent(
             .fillMaxSize()
     ) {
         CustomAppBar()
-        LazyColumn {
-            items(polls.size) { index ->
+//        LazyColumn {
+//            items(polls.size) { index ->
+//                val viewModel =
+//                    hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
+//                        key = index.toString()
+//                    ) { factory ->
+//                        factory.create(polls[index], user)
+//                    }
+//                PollComponent(viewModel)
+//            }
+//            item {
+//                Spacer(
+//                    modifier = Modifier
+//                        .background(MaterialTheme.colorScheme.background)
+//                        .fillMaxWidth()
+//                        .height(40.dp)
+//                )
+//            }
+//        }
+        EndlessLazyColumn(
+            items = polls,
+            itemKey = { poll: Poll -> poll._id},
+            itemContent = { poll ->
                 val viewModel =
-                    hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(key = index.toString()) { factory ->
-                        factory.create(polls[index], user)
+                    hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
+                        key = poll._id
+                    ) { factory ->
+                        factory.create(poll, user)
                     }
                 PollComponent(viewModel)
+            },
+            loadingItem = {
+                LoadingComponent()
+            },
+            loading = uiState == UiState.LOADING,
+            loadMore = loadPolls,
+            listEndContent = {
+                Spacer(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .fillMaxWidth()
+                        .height(40.dp)
+                )
             }
-        }
+        )
     }
 
 }
@@ -165,6 +214,8 @@ private fun PollsTabScreenPreview() {
                 __v = 0
             )
         ),
-        user = null
+        user = null,
+        uiState = UiState.IDLE,
+        loadPolls = {}
     )
 }

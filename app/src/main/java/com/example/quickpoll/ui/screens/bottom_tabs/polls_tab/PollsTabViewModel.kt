@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.utils.Resource
 import com.example.quickpoll.data.repository.PollRepository
+import com.example.quickpoll.utils.Constants.Companion.PAGE_LIMIT
 import com.example.quickpoll.utils.UiState
 import com.example.quickpoll.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,13 +29,39 @@ class PollsTabViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState.IDLE)
     val uiState = _uiState.asStateFlow()
 
+    private val _page = MutableStateFlow(1)
+
+    private val _hasMore = MutableStateFlow(false)
+
     init {
+        loadPolls()
+    }
+
+    fun loadPolls() {
+        if (_page.value != 1 && !_hasMore.value)
+            return
         viewModelScope.launch {
-            pollRepository.getAllPolls().collect { response ->
+            pollRepository.getAllPolls(
+                page = _page.value,
+                limit = PAGE_LIMIT
+            ).collect { response ->
                 when (response) {
                     is Resource.Success -> {
                         response.data.also { res ->
-                            _polls.update { res.body()?.result?.polls ?: emptyList() }
+                            val responseBody = res.body()
+                            if (responseBody == null){
+                                Log.e("GET_POLLS_ERROR", "Response body is null")
+                                return@collect
+                            }
+                            _polls.update {
+                                val newPolls = responseBody.result.polls
+                                if (_page.value == 1)
+                                    newPolls
+                                else
+                                it + newPolls
+                            }
+                            _page.update { _page.value + 1 }
+                            _hasMore.update { res.body()?.result?.hasNextPage ?: false }
                         }
                         _uiState.update { UiState.IDLE }
                     }
@@ -54,4 +81,5 @@ class PollsTabViewModel @Inject constructor(
             }
         }
     }
+
 }

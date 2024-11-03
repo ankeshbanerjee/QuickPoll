@@ -7,10 +7,12 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 data class CreatePollRequestBody(
     val question: String,
     val options: List<Option>,
+    val image: String? = null,
     val expiry: String,
 )
 
@@ -28,7 +30,10 @@ interface PollService {
     suspend fun createPoll(@Body requestBody: CreatePollRequestBody): Response<ApiResponse<Any>>
 
     @GET("poll/all")
-    suspend fun getAllPolls(): Response<ApiResponse<PollResult>>
+    suspend fun getAllPolls(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): Response<ApiResponse<PollResult>>
 
     @PATCH("poll/vote")
     suspend fun votePoll(@Body requestBody: VotePollRequestBody): Response<ApiResponse<Any>>

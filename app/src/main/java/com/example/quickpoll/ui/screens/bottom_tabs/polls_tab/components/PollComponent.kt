@@ -1,6 +1,7 @@
 package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,19 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
+import coil3.compose.rememberAsyncImagePainter
 import com.example.quickpoll.data.network.model.poll.Option
 import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.model.user.User
+import com.example.quickpoll.utils.roundOffDecimal
 
 @Composable
 fun PollComponent(viewModel: PollComponentViewModel) {
@@ -89,6 +89,15 @@ private fun PollComponentContent(
                     .clip(RoundedCornerShape(20.dp)),
                 contentScale = ContentScale.Crop
             )
+
+//            Image(
+//                painter = rememberAsyncImagePainter(poll.createdBy.profilePic),
+//                contentDescription = "profile picture of the poll creator",
+//                modifier = Modifier
+//                    .size(40.dp)
+//                    .clip(CircleShape),
+//                contentScale = ContentScale.Crop
+//            )
             Spacer(modifier = Modifier.width(6.dp))
             Column {
                 Text(
@@ -149,8 +158,16 @@ private fun PollComponentContent(
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(it.text, style = MaterialTheme.typography.bodyMedium)
+                            if(isVoted){
+                                Text(
+                                    "${roundOffDecimal(it.votedBy.size.toFloat() / poll.totalVotes.toFloat() * 100f)} %",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
                         }
                     }
                 }
@@ -183,7 +200,6 @@ private fun PollComponentContent(
         }
     }
 }
-
 @Preview
 @Composable
 private fun PollComponentPreview() {
