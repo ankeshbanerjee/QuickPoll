@@ -1,12 +1,15 @@
 package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -31,20 +34,24 @@ fun PollsTabScreen(viewModel: PollsTabViewModel, userViewModel: UserViewModel) {
     val user by userViewModel.user.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val loadPolls = viewModel::loadPolls
+    val refresh = viewModel::refreshPolls
     PollsTabScreenContent(
         polls = polls,
         user = user,
         uiState = uiState,
-        loadPolls = loadPolls
+        loadPolls = loadPolls,
+        refreshPolls = refresh
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PollsTabScreenContent(
     polls: List<Poll>,
     user: User?,
     uiState: UiState,
-    loadPolls: () -> Unit
+    loadPolls: () -> Unit,
+    refreshPolls: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -52,32 +59,39 @@ fun PollsTabScreenContent(
             .fillMaxSize()
     ) {
         CustomAppBar()
-        EndlessLazyColumn(
-            items = polls,
-            itemKey = { poll: Poll -> poll._id},
-            itemContent = { poll ->
-                val viewModel =
-                    hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
-                        key = poll._id
-                    ) { factory ->
-                        factory.create(poll, user)
-                    }
-                PollComponent(viewModel)
-            },
-            loadingItem = {
-                LoadingComponent()
-            },
-            loading = uiState == UiState.LOADING,
-            loadMore = loadPolls,
-            listEndContent = {
-                Spacer(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .height(40.dp)
-                )
-            }
-        )
+        PullToRefreshBox(
+            isRefreshing = uiState == UiState.REFRESHING,
+            onRefresh = refreshPolls,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            EndlessLazyColumn(
+                items = polls,
+                itemKey = { poll: Poll -> poll._id },
+                itemContent = { poll ->
+                    val viewModel =
+                        hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
+                            key = poll._id
+                        ) { factory ->
+                            factory.create(poll, user)
+                        }
+                    PollComponent(viewModel)
+                },
+                loadingItem = {
+                    LoadingComponent()
+                },
+                loading = uiState == UiState.LOADING,
+                refreshing = uiState == UiState.REFRESHING,
+                loadMore = loadPolls,
+                listEndContent = {
+                    Spacer(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxWidth()
+                            .height(40.dp)
+                    )
+                }
+            )
+        }
     }
 
 }
@@ -200,6 +214,7 @@ private fun PollsTabScreenPreview() {
         ),
         user = null,
         uiState = UiState.IDLE,
-        loadPolls = {}
+        loadPolls = {},
+        refreshPolls = {}
     )
 }

@@ -13,7 +13,6 @@ enum class UiState {
     LOADING,
     SUCCESS,
     ERROR,
-
     REFRESHING,
     IDLE,
 }

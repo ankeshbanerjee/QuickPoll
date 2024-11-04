@@ -1,5 +1,6 @@
 package com.example.quickpoll.ui.common.shared_components
 
+import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -20,6 +21,7 @@ internal fun LazyListState.reachedBottom(buffer: Int = 1): Boolean {
 internal fun <T> EndlessLazyColumn(
     modifier: Modifier = Modifier,
     loading: Boolean = false,
+    refreshing: Boolean = false,
     listState: LazyListState = rememberLazyListState(),
     items: List<T>,
     itemKey: (T) -> Any,
@@ -34,7 +36,9 @@ internal fun <T> EndlessLazyColumn(
 
     // load more if scrolled to bottom
     LaunchedEffect(reachedBottom) {
-        if (reachedBottom && !loading) loadMore()
+        if (reachedBottom && !loading && !refreshing) {
+            loadMore()
+        }
     }
 
     LazyColumn(modifier = modifier, state = listState) {

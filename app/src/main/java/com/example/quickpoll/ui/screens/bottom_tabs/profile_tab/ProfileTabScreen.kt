@@ -1,5 +1,6 @@
 package com.example.quickpoll.ui.screens.bottom_tabs.profile_tab
 
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,11 +20,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -71,16 +74,19 @@ fun ProfileTabScreen(
     val polls by profileTabViewModel.polls.collectAsStateWithLifecycle()
     val pollUiState by profileTabViewModel.pollsUiState.collectAsStateWithLifecycle()
     val loadPolls = profileTabViewModel::loadPolls
+    val refreshPolls = profileTabViewModel::refreshPolls
     ProfileTabScreenContent(
         user = user,
         uiState = uiState,
         uploadImage = uploadImage,
         polls = polls,
         pollUiState = pollUiState,
-        loadPolls = loadPolls
+        loadPolls = loadPolls,
+        refreshPolls = refreshPolls
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileTabScreenContent(
     user: User?,
@@ -88,7 +94,8 @@ private fun ProfileTabScreenContent(
     uploadImage: (file: File?) -> Unit,
     polls: List<Poll>,
     pollUiState: UiState,
-    loadPolls: () -> Unit
+    loadPolls: () -> Unit,
+    refreshPolls: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -99,120 +106,127 @@ private fun ProfileTabScreenContent(
         CustomAppBar(
             title = "Your Profile"
         )
-        EndlessLazyColumn(
-            listHeaderContent = {
-                Column {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .padding(vertical = 12.dp)
+        PullToRefreshBox(
+            isRefreshing = pollUiState == UiState.REFRESHING,
+            onRefresh = refreshPolls,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            EndlessLazyColumn(
+                listHeaderContent = {
+                    Column {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(user?.profilePic)
-                                    .build(),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
+                            Box(
+                                contentAlignment = Alignment.Center,
                                 modifier = Modifier
-                                    .size(150.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primaryContainer)
-
-                            )
-                            val context = LocalContext.current
-                            val pickMedia =
-                                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                                    if (uri != null) {
-                                        val file =
-                                            getFileFromUri(
-                                                contentResolver = context.contentResolver,
-                                                uri = uri
-                                            )
-                                        uploadImage(file)
-                                    }
-                                }
-                            IconButton(
-                                onClick = {
-                                    pickMedia.launch(
-                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                    )
-                                },
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .align(Alignment.BottomEnd)
+                                    .padding(vertical = 12.dp)
                             ) {
-                                Icon(
-                                    ImageVector.vectorResource(R.drawable.ic_camera),
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(user?.profilePic)
+                                        .build(),
                                     contentDescription = null,
-                                    tint = Color.White
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(150.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+
                                 )
+                                val context = LocalContext.current
+                                val pickMedia =
+                                    rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                                        if (uri != null) {
+                                            val file =
+                                                getFileFromUri(
+                                                    contentResolver = context.contentResolver,
+                                                    uri = uri
+                                                )
+                                            uploadImage(file)
+                                        }
+                                    }
+                                IconButton(
+                                    onClick = {
+                                        pickMedia.launch(
+                                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primary)
+                                        .align(Alignment.BottomEnd)
+                                ) {
+                                    Icon(
+                                        ImageVector.vectorResource(R.drawable.ic_camera),
+                                        contentDescription = null,
+                                        tint = Color.White
+                                    )
+                                }
                             }
                         }
+                        UserDetailItem(
+                            label = "Name",
+                            value = user!!.name,
+                            icon = Icons.Outlined.AccountBox
+                        )
+                        UserDetailItem(
+                            label = "Email",
+                            value = user.email,
+                            icon = Icons.Outlined.Email
+                        )
+                        UserDetailItem(
+                            label = "Registered On",
+                            value = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                LocalDateTime.parse(user.createdAt, DateTimeFormatter.ISO_DATE_TIME)
+                                    .format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+                            } else {
+                                val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                                val formatter = SimpleDateFormat("dd MMMM yyyy")
+                                val formattedDate = formatter.format(parser.parse(user.createdAt))
+                                formattedDate
+                            },
+                            icon = Icons.Outlined.Email,
+                            showDivider = false
+                        )
+                        Text(
+                            "Your Polls",
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            modifier = Modifier.padding(vertical = 14.dp, horizontal = 20.dp)
+                        )
                     }
-                    UserDetailItem(
-                        label = "Name",
-                        value = user!!.name,
-                        icon = Icons.Outlined.AccountBox
-                    )
-                    UserDetailItem(
-                        label = "Email",
-                        value = user.email,
-                        icon = Icons.Outlined.Email
-                    )
-                    UserDetailItem(
-                        label = "Registered On",
-                        value = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                            LocalDateTime.parse(user.createdAt, DateTimeFormatter.ISO_DATE_TIME)
-                                .format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-                        } else {
-                            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                            val formatter = SimpleDateFormat("dd MMMM yyyy")
-                            val formattedDate = formatter.format(parser.parse(user.createdAt))
-                            formattedDate
-                        },
-                        icon = Icons.Outlined.Email,
-                        showDivider = false
-                    )
-                    Text(
-                        "Your Polls",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        modifier = Modifier.padding(vertical = 14.dp, horizontal = 20.dp)
+                },
+                items = polls,
+                itemKey = { poll: Poll -> poll._id },
+                itemContent = { poll ->
+                    val viewModel =
+                        hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
+                            key = poll._id
+                        ) { factory ->
+                            factory.create(poll, user)
+                        }
+                    PollComponent(viewModel)
+                },
+                loadingItem = {
+                    LoadingComponent()
+                },
+                loading = pollUiState == UiState.LOADING,
+                refreshing = pollUiState == UiState.REFRESHING,
+                loadMore = loadPolls,
+                listEndContent = {
+                    Spacer(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxWidth()
+                            .height(40.dp)
                     )
                 }
-            },
-            items = polls,
-            itemKey = { poll: Poll -> poll._id},
-            itemContent = { poll ->
-                val viewModel =
-                    hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
-                        key = poll._id
-                    ) { factory ->
-                        factory.create(poll, user)
-                    }
-                PollComponent(viewModel)
-            },
-            loadingItem = {
-                LoadingComponent()
-            },
-            loading = pollUiState == UiState.LOADING,
-            loadMore = loadPolls,
-            listEndContent = {
-                Spacer(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .height(40.dp)
-                )
-            }
-        )
+            )
+        }
     }
     FullScreenDialog(uiState == UiState.LOADING)
 }
@@ -271,6 +285,7 @@ private fun ProfileTabScreenPreview() {
         uploadImage = {},
         polls = emptyList(),
         pollUiState = UiState.IDLE,
-        loadPolls = {}
+        loadPolls = {},
+        refreshPolls = {}
     )
 }

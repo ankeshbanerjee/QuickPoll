@@ -55,31 +55,74 @@ class ProfileTabViewModel @AssistedInject constructor(
         loadPolls()
     }
 
-    fun loadPolls() {
-        if (_page.value != 1 && !_hasMore.value)
-            return
+    private fun resetValues() {
+        _page.value = 1
+        _hasMore.value = false
+        _polls.value = emptyList()
+    }
+
+    fun refreshPolls() {
+        resetValues()
         viewModelScope.launch {
             pollRepository.getMyPolls(
-                page = _page.value,
-                limit = PAGE_LIMIT
+                page = _page.value, limit = PAGE_LIMIT
             ).collect { response ->
                 when (response) {
                     is Resource.Success -> {
                         response.data.also { res ->
                             val responseBody = res.body()
-                            if (responseBody == null){
+                            if (responseBody == null) {
                                 Log.e("GET_POLLS_ERROR", "Response body is null")
                                 return@collect
                             }
                             _polls.update {
                                 val newPolls = responseBody.result.polls
-                                if (_page.value == 1)
-                                    newPolls
-                                else
-                                    it + newPolls
+                                if (_page.value == 1) newPolls
+                                else it + newPolls
                             }
                             _page.update { _page.value + 1 }
-                            _hasMore.update { res.body()?.result?.hasNextPage ?: false }
+                            _hasMore.update { responseBody.result.hasNextPage }
+                        }
+                        _pollsUiState.update { UiState.IDLE }
+                    }
+
+                    is Resource.Error -> {
+                        response.message?.let { msg ->
+                            Log.d("GET_POLLS_ERROR", response.toString())
+                            showToast(appContext, msg)
+                        }
+                        _pollsUiState.update { UiState.ERROR }
+                    }
+
+                    is Resource.Loading -> {
+                        _pollsUiState.update { UiState.REFRESHING }
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadPolls() {
+        if (_page.value != 1 && !_hasMore.value) return
+        viewModelScope.launch {
+            pollRepository.getMyPolls(
+                page = _page.value, limit = PAGE_LIMIT
+            ).collect { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        response.data.also { res ->
+                            val responseBody = res.body()
+                            if (responseBody == null) {
+                                Log.e("GET_POLLS_ERROR", "Response body is null")
+                                return@collect
+                            }
+                            _polls.update {
+                                val newPolls = responseBody.result.polls
+                                if (_page.value == 1) newPolls
+                                else it + newPolls
+                            }
+                            _page.update { _page.value + 1 }
+                            _hasMore.update { responseBody.result.hasNextPage }
                         }
                         _pollsUiState.update { UiState.IDLE }
                     }

@@ -37,7 +37,58 @@ class PollsTabViewModel @Inject constructor(
         loadPolls()
     }
 
-    fun loadPolls() {
+    private fun resetValues(){
+        _page.update { 1 }
+        _hasMore.update { false }
+        _polls.update { emptyList() }
+    }
+
+    fun refreshPolls(){
+        resetValues()
+        viewModelScope.launch {
+            pollRepository.getAllPolls(
+                page = _page.value,
+                limit = PAGE_LIMIT
+            ).collect { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        response.data.also { res ->
+                            val responseBody = res.body()
+                            if (responseBody == null){
+                                Log.e("GET_POLLS_ERROR", "Response body is null")
+                                return@collect
+                            }
+                            _polls.update {
+                                val newPolls = responseBody.result.polls
+                                if (_page.value == 1)
+                                    newPolls
+                                else
+                                    it + newPolls
+                            }
+                            _page.update { _page.value + 1 }
+                            _hasMore.update { res.body()?.result?.hasNextPage ?: false }
+                        }
+                        _uiState.update { UiState.IDLE }
+                    }
+
+                    is Resource.Error -> {
+                        response.message?.let { msg ->
+                            Log.d("GET_POLLS_ERROR", response.toString())
+                            showToast(appContext, msg)
+                        }
+                        _uiState.update { UiState.ERROR }
+                    }
+
+                    is Resource.Loading -> {
+                        _uiState.update { UiState.REFRESHING }
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadPolls(
+    ) {
         if (_page.value != 1 && !_hasMore.value)
             return
         viewModelScope.launch {
