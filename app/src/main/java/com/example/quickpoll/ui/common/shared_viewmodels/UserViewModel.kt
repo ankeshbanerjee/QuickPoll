@@ -15,5 +15,5 @@ class UserViewModel @Inject constructor(
     private val _user = MutableStateFlow<User?>(null)
     val user = _user.asStateFlow()
 
-    fun updateUser (userValue: User) = _user.update { userValue }
+    fun updateUser (userValue: User?) = _user.update { userValue }
 }

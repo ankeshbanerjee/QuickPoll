@@ -18,6 +18,7 @@ data class Option(
 data class Poll(
     val __v: Int,
     val _id: String,
+    val image: String?,
     val createdAt: String,
     val createdBy: User,
     val expiry: String,

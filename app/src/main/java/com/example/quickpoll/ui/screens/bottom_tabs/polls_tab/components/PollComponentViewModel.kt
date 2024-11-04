@@ -37,21 +37,11 @@ class PollComponentViewModel @AssistedInject constructor(
 
 
     private val _isVoted = MutableStateFlow(
-//        pollInput.options.any { option ->
-//        option.votedBy.any { voter ->
-//            voter._id == user?._id
-//        }
-//    }
         false
     )
     val isVoted = _isVoted.asStateFlow()
 
     private val _votedIndex = MutableStateFlow(
-//        pollInput.options.indexOfFirst { option ->
-//            option.votedBy.any { voter ->
-//                voter._id == user?._id
-//            }
-//        }
         -1
     )
     val votedIndex = _votedIndex.asStateFlow()
@@ -72,7 +62,10 @@ class PollComponentViewModel @AssistedInject constructor(
             }
         }
 
-        Log.d("POLL_VM", "${pollInput.question} : isVoted: ${isVoted.value}, votedIdx: ${votedIndex.value}")
+        Log.d(
+            "POLL_VM",
+            "${pollInput.question} : isVoted: ${isVoted.value}, votedIdx: ${votedIndex.value}"
+        )
     }
 
     fun vote(optionIndex: Int) {

@@ -26,7 +26,8 @@ internal fun <T> EndlessLazyColumn(
     itemContent: @Composable (T) -> Unit,
     loadingItem: @Composable () -> Unit,
     loadMore: () -> Unit,
-    listEndContent: @Composable (() -> Unit)? = null
+    listEndContent: @Composable (() -> Unit)? = null,
+    listHeaderContent: @Composable (() -> Unit)? = null
 ) {
 
     val reachedBottom by remember { derivedStateOf { listState.reachedBottom() } }
@@ -37,6 +38,11 @@ internal fun <T> EndlessLazyColumn(
     }
 
     LazyColumn(modifier = modifier, state = listState) {
+        if (listHeaderContent != null) {
+            item {
+                listHeaderContent()
+            }
+        }
         items(
             items = items,
             key = { item: T -> itemKey(item) },

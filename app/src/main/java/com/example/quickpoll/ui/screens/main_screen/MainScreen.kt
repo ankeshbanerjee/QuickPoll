@@ -48,6 +48,7 @@ import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
 import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.PollsTabViewModel
 import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.PollsTabScreen
 import com.example.quickpoll.ui.screens.bottom_tabs.profile_tab.ProfileTabScreen
+import com.example.quickpoll.ui.screens.bottom_tabs.profile_tab.ProfileTabViewModel
 import com.example.quickpoll.ui.screens.main_screen.components.BottomNavItem
 import com.example.quickpoll.utils.UiState
 import kotlinx.serialization.Serializable
@@ -177,7 +178,13 @@ private fun MainScreenContent(
                     PollsTabScreen(viewModel, userViewModel)
                 }
                 composable<Profile> {
-                    ProfileTabScreen()
+                    val viewModel = hiltViewModel<ProfileTabViewModel, ProfileTabViewModel.ProfileTabViewModelFactory>{ factory ->
+                        factory.create { user -> userViewModel.updateUser(user) }
+                    }
+                    ProfileTabScreen(
+                        profileTabViewModel = viewModel,
+                        userViewModel = userViewModel
+                    )
                 }
             }
         }

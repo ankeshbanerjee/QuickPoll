@@ -52,25 +52,6 @@ fun PollsTabScreenContent(
             .fillMaxSize()
     ) {
         CustomAppBar()
-//        LazyColumn {
-//            items(polls.size) { index ->
-//                val viewModel =
-//                    hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
-//                        key = index.toString()
-//                    ) { factory ->
-//                        factory.create(polls[index], user)
-//                    }
-//                PollComponent(viewModel)
-//            }
-//            item {
-//                Spacer(
-//                    modifier = Modifier
-//                        .background(MaterialTheme.colorScheme.background)
-//                        .fillMaxWidth()
-//                        .height(40.dp)
-//                )
-//            }
-//        }
         EndlessLazyColumn(
             items = polls,
             itemKey = { poll: Poll -> poll._id},
@@ -144,7 +125,8 @@ private fun PollsTabScreenPreview() {
                 expiry = "2024-10-22T12:37:48.755Z",
                 createdAt = "2024-10-22T12:37:48.763Z",
                 updatedAt = "2024-10-22T12:49:29.491Z",
-                __v = 4
+                __v = 4,
+                image = null
             ),
             Poll(
                 _id = "671e92250eb88bbde2827d1b",
@@ -184,7 +166,8 @@ private fun PollsTabScreenPreview() {
                 expiry = "2024-10-27T19:19:01.783Z",
                 createdAt = "2024-10-27T19:19:01.796Z",
                 updatedAt = "2024-10-27T19:19:01.796Z",
-                __v = 0
+                __v = 0,
+                image = "https://www.cornwallbusinessawards.co.uk/wp-content/uploads/2017/11/dummy450x450.jpg"
             ),
             Poll(
                 _id = "671f528d98caa91ae0ebc48f",
@@ -211,7 +194,8 @@ private fun PollsTabScreenPreview() {
                 expiry = "2024-10-28T08:59:57.280Z",
                 createdAt = "2024-10-28T08:59:57.293Z",
                 updatedAt = "2024-10-28T08:59:57.293Z",
-                __v = 0
+                __v = 0,
+                image = null
             )
         ),
         user = null,

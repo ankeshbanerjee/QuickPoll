@@ -21,7 +21,7 @@ serializationJson = "1.7.3"
 datastore = "1.1.1"
 hiltViewModel = "1.2.0"
 gson = "2.11.0"
-coil = "3.0.0-rc01"
+coil = "3.0.0-rc02"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +58,8 @@ datastore = { group = "androidx.datastore", name = "datastore-preferences", vers
 hilt-viewmodel = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltViewModel"}
 # coil
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil"}
+# coil okhttp
+coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

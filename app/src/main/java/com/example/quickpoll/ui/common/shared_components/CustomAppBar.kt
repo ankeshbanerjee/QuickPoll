@@ -14,12 +14,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomAppBar() {
-    CustomAppBarContent()
+fun CustomAppBar(
+    title: String? = null
+) {
+    CustomAppBarContent(
+        title = title
+    )
 }
 
 @Composable
-private fun CustomAppBarContent() {
+private fun CustomAppBarContent(
+    title: String? = null
+) {
     Row(
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier
@@ -27,7 +33,7 @@ private fun CustomAppBarContent() {
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        Text("QuickPoll", style = MaterialTheme.typography.headlineMedium.copy(
+        Text(title ?: "QuickPoll", style = MaterialTheme.typography.headlineMedium.copy(
             fontWeight = FontWeight.SemiBold
         ))
     }

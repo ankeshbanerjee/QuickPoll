@@ -46,6 +46,14 @@ class PollRepository @Inject constructor(
         limit = limit
     ) }
 
+    suspend fun getMyPolls(
+        page: Int = 1,
+        limit: Int = 10,
+    ) = safeApiCall { pollService.getMyPolls(
+        page = page,
+        limit = limit
+    ) }
+
     suspend fun votePoll(pollId: String, option: Int) = safeApiCall {
         pollService.votePoll(VotePollRequestBody(pollId, option))
     }

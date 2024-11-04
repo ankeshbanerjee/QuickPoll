@@ -35,6 +35,13 @@ interface PollService {
         @Query("limit") limit: Int
     ): Response<ApiResponse<PollResult>>
 
+    @GET("poll/my-polls")
+    suspend fun getMyPolls(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
+    ): Response<ApiResponse<PollResult>>
+
+
     @PATCH("poll/vote")
     suspend fun votePoll(@Body requestBody: VotePollRequestBody): Response<ApiResponse<Any>>
 
