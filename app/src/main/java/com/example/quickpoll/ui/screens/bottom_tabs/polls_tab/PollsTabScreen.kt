@@ -1,5 +1,6 @@
 package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,12 +71,17 @@ fun PollsTabScreenContent(
                 items = polls,
                 itemKey = { poll: Poll -> poll._id },
                 itemContent = { poll ->
+                    // args of viewmodel not updating - sol. -> using launchedEffect;
                     val viewModel =
                         hiltViewModel<PollComponentViewModel, PollComponentViewModel.PollComponentViewModelFactory>(
                             key = poll._id
                         ) { factory ->
                             factory.create(poll, user)
                         }
+                    // update poll in viewmodel when it changes as viewmodel doesn't get re-instantiated on recomposition
+                    LaunchedEffect(poll) {
+                        viewModel.updatePoll(poll)
+                    }
                     PollComponent(viewModel)
                 },
                 loadingItem = {

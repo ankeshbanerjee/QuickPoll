@@ -35,6 +35,10 @@ class PollComponentViewModel @AssistedInject constructor(
     private val _poll = MutableStateFlow(pollInput)
     val poll = _poll.asStateFlow()
 
+    fun updatePoll(updatedPoll: Poll) {
+        _poll.value = updatedPoll
+    }
+
 
     private val _isVoted = MutableStateFlow(
         false

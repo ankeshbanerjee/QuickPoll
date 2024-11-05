@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -238,6 +239,10 @@ private fun ProfileTabScreenContent(
                         ) { factory ->
                             factory.create(poll, user)
                         }
+                    // update poll in viewmodel when it changes as viewmodel doesn't get re-instantiated on recomposition
+                    LaunchedEffect(poll) {
+                        viewModel.updatePoll(poll)
+                    }
                     PollComponent(viewModel)
                 },
                 loadingItem = {

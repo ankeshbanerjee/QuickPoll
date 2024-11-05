@@ -37,13 +37,13 @@ class PollsTabViewModel @Inject constructor(
         loadPolls()
     }
 
-    private fun resetValues(){
+    private fun resetValues() {
         _page.update { 1 }
         _hasMore.update { false }
         _polls.update { emptyList() }
     }
 
-    fun refreshPolls(){
+    fun refreshPolls() {
         resetValues()
         viewModelScope.launch {
             pollRepository.getAllPolls(
@@ -54,19 +54,16 @@ class PollsTabViewModel @Inject constructor(
                     is Resource.Success -> {
                         response.data.also { res ->
                             val responseBody = res.body()
-                            if (responseBody == null){
+                            if (responseBody == null) {
                                 Log.e("GET_POLLS_ERROR", "Response body is null")
                                 return@collect
                             }
                             _polls.update {
-                                val newPolls = responseBody.result.polls
-                                if (_page.value == 1)
-                                    newPolls
-                                else
-                                    it + newPolls
+                                responseBody.result.polls
                             }
-                            _page.update { _page.value + 1 }
-                            _hasMore.update { res.body()?.result?.hasNextPage ?: false }
+                            _page.update { it + 1 }
+                            _hasMore.update { responseBody.result.hasNextPage }
+                            Log.d("REFRESH_POLLS", "${_page.value} ${_hasMore.value} ${_polls.value[0].totalVotes}")
                         }
                         _uiState.update { UiState.IDLE }
                     }
@@ -100,7 +97,7 @@ class PollsTabViewModel @Inject constructor(
                     is Resource.Success -> {
                         response.data.also { res ->
                             val responseBody = res.body()
-                            if (responseBody == null){
+                            if (responseBody == null) {
                                 Log.e("GET_POLLS_ERROR", "Response body is null")
                                 return@collect
                             }
@@ -109,10 +106,10 @@ class PollsTabViewModel @Inject constructor(
                                 if (_page.value == 1)
                                     newPolls
                                 else
-                                it + newPolls
+                                    it + newPolls
                             }
-                            _page.update { _page.value + 1 }
-                            _hasMore.update { res.body()?.result?.hasNextPage ?: false }
+                            _page.update { it + 1 }
+                            _hasMore.update { responseBody.result.hasNextPage }
                         }
                         _uiState.update { UiState.IDLE }
                     }
