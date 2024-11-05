@@ -41,18 +41,26 @@ class PollRepository @Inject constructor(
     suspend fun getAllPolls(
         page: Int = 1,
         limit: Int = 10,
-    ) = safeApiCall { pollService.getAllPolls(
-        page = page,
-        limit = limit
-    ) }
+    ) = safeApiCall {
+        pollService.getAllPolls(
+            page = page,
+            limit = limit
+        )
+    }
 
     suspend fun getMyPolls(
         page: Int = 1,
         limit: Int = 10,
-    ) = safeApiCall { pollService.getMyPolls(
-        page = page,
-        limit = limit
-    ) }
+    ) = safeApiCall {
+        pollService.getMyPolls(
+            page = page,
+            limit = limit
+        )
+    }
+
+    suspend fun getPollById(pollId: String) = safeApiCall {
+        pollService.getPollById(pollId)
+    }
 
     suspend fun votePoll(pollId: String, option: Int) = safeApiCall {
         pollService.votePoll(VotePollRequestBody(pollId, option))

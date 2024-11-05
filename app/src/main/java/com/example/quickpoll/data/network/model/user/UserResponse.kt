@@ -10,6 +10,7 @@ data class User(
     val createdAt: String,
     val email: String,
     val name: String,
+    val fcmTokens: List<String> = emptyList(),
     val profilePic: String,
     val updatedAt: String
 )

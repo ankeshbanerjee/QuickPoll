@@ -6,6 +6,11 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.POST
+
+data class FcmTokenRequest(
+    val token: String
+)
 
 interface UserService {
     @GET("user/me")
@@ -15,4 +20,14 @@ interface UserService {
     suspend fun updateUser(
         @Body update: Map<String, String>
     ): Response<ApiResponse<UserResult>>
+
+    @POST("user/save-token")
+    suspend fun saveFcmToken(
+        @Body fcmTokenRequest: FcmTokenRequest
+    ): Response<ApiResponse<Any>>
+
+    @POST("user/delete-token")
+    suspend fun deleteFcmToken(
+        @Body fcmTokenRequest: FcmTokenRequest
+    ): Response<ApiResponse<Any>>
 }

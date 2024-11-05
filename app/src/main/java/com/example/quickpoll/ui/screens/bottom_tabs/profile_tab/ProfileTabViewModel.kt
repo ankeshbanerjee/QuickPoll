@@ -11,8 +11,12 @@ import com.example.quickpoll.data.repository.PollRepository
 import com.example.quickpoll.data.repository.UploadRepository
 import com.example.quickpoll.data.repository.UserRepository
 import com.example.quickpoll.utils.Constants.Companion.PAGE_LIMIT
+import com.example.quickpoll.utils.PreferencesDataStoreHelper
+import com.example.quickpoll.utils.PreferencesDataStoreKey
 import com.example.quickpoll.utils.UiState
 import com.example.quickpoll.utils.showToast
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.io.File
 
 @HiltViewModel(assistedFactory = ProfileTabViewModel.ProfileTabViewModelFactory::class)
@@ -203,5 +208,37 @@ class ProfileTabViewModel @AssistedInject constructor(
             }
         }
     }
+
+    fun logout(
+        resetNavigation: () -> Unit
+    ){
+        viewModelScope.launch {
+            val token = Firebase.messaging.token.await()
+            userRepository.deleteFcmToken(token).collect {
+                when (it) {
+                    is Resource.Success -> {
+                        PreferencesDataStoreHelper.removeStringValueWithSpecificKey(
+                            PreferencesDataStoreKey.AUTH_TOKEN,
+                            appContext
+                        )
+                        _uiState.update { UiState.SUCCESS }
+                        resetNavigation()
+                    }
+
+                    is Resource.Error -> {
+                        Log.e("DELETE_FCM_ERROR", it.message.toString())
+                        _uiState.update { UiState.ERROR }
+                    }
+
+                    is Resource.Loading -> {
+                        _uiState.update { UiState.LOADING }
+                    }
+                }
+            }
+
+
+        }
+    }
+
 
 }

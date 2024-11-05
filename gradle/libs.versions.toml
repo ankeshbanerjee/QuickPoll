@@ -23,6 +23,8 @@ hiltViewModel = "1.2.0"
 gson = "2.11.0"
 coil = "3.0.0-rc02"
 material3 = "1.3.1"
+googleGmsGoogleServices = "4.4.2"
+firebaseMessaging = "24.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -61,6 +63,7 @@ hilt-viewmodel = { group = "androidx.hilt", name = "hilt-navigation-compose", ve
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil"}
 # coil okhttp
 coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil"}
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -70,4 +73,5 @@ hilt-gradle-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hil
 jvm = {id = "org.jetbrains.kotlin.jvm", version.ref = "jvm"}
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialzation"}
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

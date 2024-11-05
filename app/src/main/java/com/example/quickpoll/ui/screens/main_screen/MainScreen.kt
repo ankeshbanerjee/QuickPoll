@@ -1,5 +1,6 @@
 package com.example.quickpoll.ui.screens.main_screen
 
+import android.Manifest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -42,6 +46,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.quickpoll.AddPoll
 import com.example.quickpoll.LocalParentNavController
+import com.example.quickpoll.MainActivity
 import com.example.quickpoll.R
 import com.example.quickpoll.ui.common.shared_components.LoadingComponent
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
@@ -59,8 +64,8 @@ sealed class BottomNavigationTabs<T>(
     val route: T,
     val icon: Int
 ) {
-    data object PollsTab: BottomNavigationTabs<Polls>("Polls", Polls, R.drawable.ic_poll)
-    data object ProfileTab: BottomNavigationTabs<Profile>("Profile", Profile, R.drawable.ic_user)
+    data object PollsTab : BottomNavigationTabs<Polls>("Polls", Polls, R.drawable.ic_poll)
+    data object ProfileTab : BottomNavigationTabs<Profile>("Profile", Profile, R.drawable.ic_user)
 }
 
 val LocalBottomNavController =
@@ -74,6 +79,15 @@ fun MainScreen(viewModel: MainViewModel, userViewModel: UserViewModel) {
     }
     val user = userViewModel.user.collectAsStateWithLifecycle()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        ActivityCompat.requestPermissions(
+            context as MainActivity,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            1
+        )
+    }
     MainScreenContent(
         uiState = uiState.value,
         userViewModel = userViewModel,
@@ -178,9 +192,10 @@ private fun MainScreenContent(
                     PollsTabScreen(viewModel, userViewModel)
                 }
                 composable<Profile> {
-                    val viewModel = hiltViewModel<ProfileTabViewModel, ProfileTabViewModel.ProfileTabViewModelFactory>{ factory ->
-                        factory.create { user -> userViewModel.updateUser(user) }
-                    }
+                    val viewModel =
+                        hiltViewModel<ProfileTabViewModel, ProfileTabViewModel.ProfileTabViewModelFactory> { factory ->
+                            factory.create { user -> userViewModel.updateUser(user) }
+                        }
                     ProfileTabScreen(
                         profileTabViewModel = viewModel,
                         userViewModel = userViewModel

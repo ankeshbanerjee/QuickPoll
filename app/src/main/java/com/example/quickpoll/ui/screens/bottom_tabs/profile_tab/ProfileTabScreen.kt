@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import com.example.quickpoll.LocalParentNavController
+import com.example.quickpoll.Login
 import com.example.quickpoll.R
 import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.model.user.User
@@ -62,6 +65,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.log
 
 @Composable
 fun ProfileTabScreen(
@@ -75,6 +79,18 @@ fun ProfileTabScreen(
     val pollUiState by profileTabViewModel.pollsUiState.collectAsStateWithLifecycle()
     val loadPolls = profileTabViewModel::loadPolls
     val refreshPolls = profileTabViewModel::refreshPolls
+    val logout = profileTabViewModel::logout
+    val parentNavController = LocalParentNavController.current
+    fun handleLogout(
+    ) {
+        logout(
+            {
+                parentNavController.navigate(Login) {
+                    popUpTo(0)
+                }
+            }
+        )
+    }
     ProfileTabScreenContent(
         user = user,
         uiState = uiState,
@@ -82,7 +98,8 @@ fun ProfileTabScreen(
         polls = polls,
         pollUiState = pollUiState,
         loadPolls = loadPolls,
-        refreshPolls = refreshPolls
+        refreshPolls = refreshPolls,
+        logout = ::handleLogout
     )
 }
 
@@ -95,7 +112,8 @@ private fun ProfileTabScreenContent(
     polls: List<Poll>,
     pollUiState: UiState,
     loadPolls: () -> Unit,
-    refreshPolls: () -> Unit
+    refreshPolls: () -> Unit,
+    logout: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -104,7 +122,18 @@ private fun ProfileTabScreenContent(
             .padding(top = 12.dp),
     ) {
         CustomAppBar(
-            title = "Your Profile"
+            title = "Your Profile",
+            endComponent = {
+                IconButton(
+                    onClick = logout,
+                )
+                {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_logout),
+                        contentDescription = null
+                    )
+                }
+            }
         )
         PullToRefreshBox(
             isRefreshing = pollUiState == UiState.REFRESHING,
@@ -286,6 +315,7 @@ private fun ProfileTabScreenPreview() {
         polls = emptyList(),
         pollUiState = UiState.IDLE,
         loadPolls = {},
-        refreshPolls = {}
+        refreshPolls = {},
+        logout = {}
     )
 }
