@@ -6,8 +6,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -42,44 +48,47 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            QuickPollTheme {
-                val navController = rememberNavController()
-                val userViewModel = hiltViewModel<UserViewModel>()
-                CompositionLocalProvider(LocalParentNavController provides navController) {
-                    NavHost(startDestination = Splash, navController = navController) {
-                        composable<Splash> { SplashScreen() }
-                        composable<Login> {
-                            val viewModel = hiltViewModel<LoginViewModel>()
-                            LoginScreen(viewModel)
-                        }
-                        composable<Register> {
-                            val viewModel = hiltViewModel<RegisterViewModel>()
-                            RegisterScreen(viewModel)
-                        }
-                        composable<Main> {
-                            val viewModel = hiltViewModel<MainViewModel>()
-                            MainScreen(viewModel, userViewModel)
-                        }
-                        composable<AddPoll> {
-                            val viewModel = hiltViewModel<AddPollViewModel>()
-                            AddPollScreen(viewModel)
-                        }
-                        composable<SinglePoll> (
-                            deepLinks = listOf(
-                                navDeepLink <SinglePoll>(
-                                    basePath = "https://${Constants.DEEP_LINK_DOMAIN}/poll"
+            // this works as SafeAreaView
+            Box(modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)){
+                QuickPollTheme {
+                    val navController = rememberNavController()
+                    val userViewModel = hiltViewModel<UserViewModel>()
+                    CompositionLocalProvider(LocalParentNavController provides navController) {
+                        NavHost(startDestination = Splash, navController = navController) {
+                            composable<Splash> { SplashScreen() }
+                            composable<Login> {
+                                val viewModel = hiltViewModel<LoginViewModel>()
+                                LoginScreen(viewModel)
+                            }
+                            composable<Register> {
+                                val viewModel = hiltViewModel<RegisterViewModel>()
+                                RegisterScreen(viewModel)
+                            }
+                            composable<Main> {
+                                val viewModel = hiltViewModel<MainViewModel>()
+                                MainScreen(viewModel, userViewModel)
+                            }
+                            composable<AddPoll> {
+                                val viewModel = hiltViewModel<AddPollViewModel>()
+                                AddPollScreen(viewModel)
+                            }
+                            composable<SinglePoll> (
+                                deepLinks = listOf(
+                                    navDeepLink <SinglePoll>(
+                                        basePath = "https://${Constants.DEEP_LINK_DOMAIN}/poll"
+                                    )
                                 )
-                            )
-                        ){
-                            val viewModel = hiltViewModel<SinglePollViewModel>()
-                            SinglePollScreen(
-                                viewModel,
-                                userViewModel
-                            )
+                            ){
+                                val viewModel = hiltViewModel<SinglePollViewModel>()
+                                SinglePollScreen(
+                                    viewModel,
+                                    userViewModel
+                                )
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
     }

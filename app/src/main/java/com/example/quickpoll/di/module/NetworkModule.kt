@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -28,7 +29,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providesOkHttpClient(@ApplicationContext applicationContext: Context) =
-        OkHttpClient.Builder().addInterceptor(object : Interceptor {
+        OkHttpClient.Builder()
+            .connectTimeout(3, TimeUnit.MINUTES)
+            .readTimeout(3, TimeUnit.MINUTES)
+            .writeTimeout(3, TimeUnit.MINUTES)
+            .addInterceptor(object : Interceptor {
             override fun intercept(chain: Interceptor.Chain): Response {
                 val request = chain.request().newBuilder()
                 runBlocking {
