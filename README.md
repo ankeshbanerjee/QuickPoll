@@ -5,6 +5,8 @@ App name - **QuickPoll**
 
 QuickPoll is an android app which lets you create and interact with polls.
 
+**Download and test the app:** [Click here](https://drive.google.com/file/d/1AOhk3woCtWtgjEGVnPWCXM7uu4g7EO1W/view?usp=sharing) to get the .apk file and explore its features!
+
 ## Features
 
 - Create and vote on polls.
