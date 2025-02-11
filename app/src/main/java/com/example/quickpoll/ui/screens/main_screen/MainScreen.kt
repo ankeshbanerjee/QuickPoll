@@ -121,7 +121,7 @@ private fun MainScreenContent(
                         )
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                         .padding(vertical = 16.dp)
                 ) {
                     BottomNavItem(
@@ -177,7 +177,7 @@ private fun MainScreenContent(
                         Icon(
                             Icons.Outlined.Add,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(40.dp)
                         )
                     }

@@ -1,6 +1,5 @@
 package com.example.quickpoll.ui.screens.single_poll_screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,8 +29,8 @@ import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.model.user.User
 import com.example.quickpoll.ui.common.shared_components.LoadingComponent
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponent
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponentViewModel
+import com.example.quickpoll.ui.common.shared_components.poll_component.PollComponent
+import com.example.quickpoll.ui.common.shared_components.poll_component.PollComponentViewModel
 import com.example.quickpoll.utils.UiState
 
 @Composable

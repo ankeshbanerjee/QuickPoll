@@ -1,8 +1,6 @@
 package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,8 +24,8 @@ import com.example.quickpoll.ui.common.shared_components.CustomAppBar
 import com.example.quickpoll.ui.common.shared_components.EndlessLazyColumn
 import com.example.quickpoll.ui.common.shared_components.LoadingComponent
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponent
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponentViewModel
+import com.example.quickpoll.ui.common.shared_components.poll_component.PollComponent
+import com.example.quickpoll.ui.common.shared_components.poll_component.PollComponentViewModel
 import com.example.quickpoll.utils.UiState
 
 @Composable

@@ -71,7 +71,11 @@ private fun LoginScreenContent(
             .fillMaxSize()
             .padding(horizontal = 20.dp)
     ) {
-        Text("Welcome User!", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            "Welcome User!",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
         Spacer(modifier = Modifier.height(10.dp))
         CustomOutlinedTextInput(
             label = "Email",
@@ -101,7 +105,7 @@ private fun LoginScreenContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            Text("Don't have an account? ")
+            Text("Don't have an account? ", color = MaterialTheme.colorScheme.onSurface)
             Text("Register", style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold

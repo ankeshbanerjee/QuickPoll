@@ -75,7 +75,7 @@ private fun RegisterScreenContent(
             .fillMaxSize()
             .padding(horizontal = 20.dp)
     ) {
-        Text("Create Account!", style = MaterialTheme.typography.headlineMedium)
+        Text("Create Account!", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
         Spacer(modifier = Modifier.height(10.dp))
         CustomOutlinedTextInput(
             label = "Name",
@@ -114,7 +114,7 @@ private fun RegisterScreenContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            Text("Already have an account? ")
+            Text("Already have an account? ", color = MaterialTheme.colorScheme.onSurface)
             Text("Login", style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold

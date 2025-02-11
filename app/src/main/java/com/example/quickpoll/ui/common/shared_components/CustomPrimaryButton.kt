@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,13 +51,13 @@ fun CustomPrimaryButton(
                 Icon(
                     it,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.width(6.dp))
             }
             Text(
                 text,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
             )

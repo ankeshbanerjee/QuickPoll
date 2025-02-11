@@ -34,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -59,15 +58,14 @@ import com.example.quickpoll.ui.common.shared_components.EndlessLazyColumn
 import com.example.quickpoll.ui.common.shared_components.FullScreenDialog
 import com.example.quickpoll.ui.common.shared_components.LoadingComponent
 import com.example.quickpoll.ui.common.shared_viewmodels.UserViewModel
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponent
-import com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components.PollComponentViewModel
+import com.example.quickpoll.ui.common.shared_components.poll_component.PollComponent
+import com.example.quickpoll.ui.common.shared_components.poll_component.PollComponentViewModel
 import com.example.quickpoll.utils.UiState
 import com.example.quickpoll.utils.getFileFromUri
 import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.log
 
 @Composable
 fun ProfileTabScreen(
@@ -193,7 +191,7 @@ private fun ProfileTabScreenContent(
                                     Icon(
                                         ImageVector.vectorResource(R.drawable.ic_camera),
                                         contentDescription = null,
-                                        tint = Color.White
+                                        tint = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
                             }

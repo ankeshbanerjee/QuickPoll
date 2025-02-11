@@ -1,4 +1,4 @@
-package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components
+package com.example.quickpoll.ui.common.shared_components.poll_component
 
 import android.content.Context
 import android.util.Log

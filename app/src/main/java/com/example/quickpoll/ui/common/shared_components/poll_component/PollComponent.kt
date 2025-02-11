@@ -1,4 +1,4 @@
-package com.example.quickpoll.ui.screens.bottom_tabs.polls_tab.components
+package com.example.quickpoll.ui.common.shared_components.poll_component
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -24,25 +24,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.example.quickpoll.R
 import com.example.quickpoll.data.network.model.poll.Option
 import com.example.quickpoll.data.network.model.poll.Poll
 import com.example.quickpoll.data.network.model.user.User
 import com.example.quickpoll.utils.roundOffDecimal
-import kotlin.reflect.typeOf
 
 @Composable
 fun PollComponent(viewModel: PollComponentViewModel) {
