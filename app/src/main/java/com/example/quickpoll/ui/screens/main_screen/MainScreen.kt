@@ -116,12 +116,12 @@ private fun MainScreenContent(
                         .shadow(20.dp)
                         .border(
                             0.5.dp,
-                            Color.LightGray,
+                            MaterialTheme.colorScheme.surfaceVariant,
                             RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                         )
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                         .fillMaxWidth()
-                        .background(Color.White)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(vertical = 16.dp)
                 ) {
                     BottomNavItem(

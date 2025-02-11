@@ -83,6 +83,11 @@ private fun PollComponentContent(
             .clip(
                 shape = RoundedCornerShape(8.dp)
             )
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.surfaceContainer,
+                RoundedCornerShape(8.dp)
+            )
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp, vertical = 10.dp)
             .fillMaxWidth()

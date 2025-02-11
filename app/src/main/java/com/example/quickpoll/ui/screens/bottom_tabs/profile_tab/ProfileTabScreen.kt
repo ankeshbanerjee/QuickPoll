@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -218,7 +219,7 @@ private fun ProfileTabScreenContent(
                                 val formattedDate = formatter.format(parser.parse(user.createdAt))
                                 formattedDate
                             },
-                            icon = Icons.Outlined.Email,
+                            icon = Icons.Outlined.Info,
                             showDivider = false
                         )
                         Text(
