@@ -51,10 +51,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.quickpoll.LocalParentNavController
+import com.example.quickpoll.Main
 import com.example.quickpoll.R
 import com.example.quickpoll.ui.common.shared_components.CustomOutlinedTextInput
 import com.example.quickpoll.ui.common.shared_components.CustomPrimaryButton
 import com.example.quickpoll.ui.common.shared_components.FullScreenDialog
+import com.example.quickpoll.ui.screens.main_screen.MainScreen
 import com.example.quickpoll.utils.UiState
 import com.example.quickpoll.utils.getFileFromUri
 import com.example.quickpoll.utils.showToast
@@ -71,7 +73,12 @@ fun AddPollScreen(viewModel: AddPollViewModel) {
     val options by viewModel.options.collectAsStateWithLifecycle()
     fun addOption(option: String) = viewModel.addOption(option)
     fun deleteOption(option: String) = viewModel.deleteOption(option)
-    fun createPoll() = viewModel.createPoll(::goBack)
+    fun createPoll() = viewModel.createPoll {
+        navController.navigate(Main) {
+            popUpTo(0)
+        }
+    }
+
     fun uploadImage(file: File?) = viewModel.uploadImage(file)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val imageUrl by viewModel.imageurl.collectAsStateWithLifecycle()
@@ -180,7 +187,8 @@ private fun AddPollScreenContent(
             val pickMedia =
                 rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                     if (uri != null) {
-                        val file = getFileFromUri(contentResolver = context.contentResolver, uri = uri)
+                        val file =
+                            getFileFromUri(contentResolver = context.contentResolver, uri = uri)
                         uploadImage(file)
                     }
                 }
